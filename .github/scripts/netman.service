@@ -1,0 +1,10 @@
+[Unit]
+Description=Job that runs your user script
+
+[Service]
+ExecStart=/home/vagrant/netman
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
