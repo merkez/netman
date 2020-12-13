@@ -59,7 +59,7 @@ func execUp(iname string) error {
 
 func createInterfacesSetting(interfaces Interfaces) string {
 	var tpl bytes.Buffer
-	tmpl := template.Must(template.ParseFiles("/home/ubuntu/netmanage/interfaces.tmpl"))
+	tmpl := template.Must(template.ParseFiles("/home/vagrant/netman/interfaces.tmpl"))
 	tmpl.Execute(&tpl, interfaces)
 	return tpl.String()
 }
