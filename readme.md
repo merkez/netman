@@ -5,7 +5,7 @@ Used in the virtual machine which is integrated to Network Analysis Platform.
 
 ## How it works 
 
-There is a service file called [netman.service](.github/scripts/netman.service). It needs to be placed 
+There is a service file called [netman.service](service/netman.service). It needs to be placed 
 under `/lib/systemd/system/` in the virtual machine. (Ubuntu 18.04)
 
 The service file indicates that netman will run once when system booted then exits. (No further run). 

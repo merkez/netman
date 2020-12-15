@@ -2,7 +2,7 @@
 Description=Job that runs your user script
 
 [Service]
-ExecStart=/home/vagrant/netman
+ExecStart=/home/vagrant/netman/netman
 Type=oneshot
 RemainAfterExit=yes
 

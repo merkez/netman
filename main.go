@@ -21,28 +21,28 @@ type NetInterface struct {
 	InetName string
 }
 
-func main()  {
+func main() {
 
 	var netInterfaces []NetInterface
-	 ineti, err :=  net.Interfaces()
-	 if err != nil {
-	 	panic(err)
-	 }
-	 for _, inter := range ineti {
-		 if !strings.Contains(inter.Flags.String(), "up"){
-			netInterfaces = append(netInterfaces, NetInterface{InetName:inter.Name})
-		 }
-	 }
-	 downInterfaces := Interfaces{NetInt: netInterfaces}
-	 info := createInterfacesSetting(downInterfaces)
-	 fmt.Printf("%s\n", info)
-	 createInterfacesFile(info)
-
-	 for _, i := range downInterfaces.NetInt {
-	 	if err := execUp(i.InetName); err != nil {
-	 		panic(err)
+	ineti, err := net.Interfaces()
+	if err != nil {
+		panic(err)
+	}
+	for _, inter := range ineti {
+		if !strings.Contains(inter.Flags.String(), "up") {
+			netInterfaces = append(netInterfaces, NetInterface{InetName: inter.Name})
 		}
-	 }
+	}
+	downInterfaces := Interfaces{NetInt: netInterfaces}
+	info := createInterfacesSetting(downInterfaces)
+	fmt.Printf("%s\n", info)
+	createInterfacesFile(info)
+
+	for _, i := range downInterfaces.NetInt {
+		if err := execUp(i.InetName); err != nil {
+			panic(err)
+		}
+	}
 
 }
 
@@ -59,7 +59,7 @@ func execUp(iname string) error {
 
 func createInterfacesSetting(interfaces Interfaces) string {
 	var tpl bytes.Buffer
-	tmpl := template.Must(template.ParseFiles("/home/vagrant/netman/interfaces.tmpl"))
+	tmpl := template.Must(template.ParseFiles("/home/vagrant/netman/netman/interfaces.tmpl"))
 	tmpl.Execute(&tpl, interfaces)
 	return tpl.String()
 }
