@@ -43,7 +43,10 @@ func main() {
 			panic(err)
 		}
 	}
-	deleteDefaultRule()
+
+	if err := deleteDefaultRule(); err !=nil {
+		panic(err)
+	}
 }
 
 func execUp(iname string) error {
@@ -64,6 +67,7 @@ func createInterfacesSetting(interfaces Interfaces) string {
 	return tpl.String()
 }
 
+
 func createInterfacesFile(content string) error {
 
 	f, err := os.Create("/etc/network/interfaces")
@@ -82,7 +86,7 @@ func createInterfacesFile(content string) error {
 
 func deleteDefaultRule() error{
 	//deleting the default rule set automatically in order to have Internet.
-	cmd := exec.Command("sudo ip route del default")
+	cmd := exec.Command("sudo", "ip", "route", "del", "default")
 	err := cmd.Start()
 	if err != nil {
 		return err
