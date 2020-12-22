@@ -11,7 +11,10 @@ import (
 )
 
 const (
-	IFUP = "ifup"
+	IFUP                 = "ifup"
+	INTERFACES_FILE      = "/etc/network/interfaces"
+	DOWN_INTERFACES_FILE = "/etc/network/downinterfaces"
+	TEMPLATE_PATH        = "/home/vagrant/netman/interfaces.tmpl"
 )
 
 type Interfaces struct {
@@ -34,17 +37,25 @@ func main() {
 		}
 	}
 	downInterfaces := Interfaces{NetInt: netInterfaces}
+
 	info := createInterfacesSetting(downInterfaces)
 	fmt.Printf("%s\n", info)
-	createInterfacesFile(info)
-
+	if err := createFile(INTERFACES_FILE, info); err != nil {
+		panic(err)
+	}
+	var tempInterfaces []string
 	for _, i := range downInterfaces.NetInt {
+		tempInterfaces = append(tempInterfaces, i.InetName)
 		if err := execUp(i.InetName); err != nil {
 			panic(err)
 		}
 	}
+	c := strings.Join(tempInterfaces, ",")
+	if err := createFile(DOWN_INTERFACES_FILE, c); err != nil {
+		panic(err)
+	}
 
-	if err := deleteDefaultRule(); err !=nil {
+	if err := deleteDefaultRule(); err != nil {
 		panic(err)
 	}
 }
@@ -61,16 +72,16 @@ func execUp(iname string) error {
 }
 
 func createInterfacesSetting(interfaces Interfaces) string {
+
 	var tpl bytes.Buffer
-	tmpl := template.Must(template.ParseFiles("/home/vagrant/netman/interfaces.tmpl"))
+	tmpl := template.Must(template.ParseFiles(TEMPLATE_PATH))
 	tmpl.Execute(&tpl, interfaces)
 	return tpl.String()
 }
 
+func createFile(path string, content string) error {
 
-func createInterfacesFile(content string) error {
-
-	f, err := os.Create("/etc/network/interfaces")
+	f, err := os.Create(path)
 	if err != nil {
 		return err
 	}
@@ -84,7 +95,7 @@ func createInterfacesFile(content string) error {
 	return nil
 }
 
-func deleteDefaultRule() error{
+func deleteDefaultRule() error {
 	//deleting the default rule set automatically in order to have Internet.
 	cmd := exec.Command("sudo", "ip", "route", "del", "default")
 	err := cmd.Start()
